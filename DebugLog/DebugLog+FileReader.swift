@@ -24,7 +24,7 @@ extension DebugLog
         
         let filePath: NSString!
         
-        let _fileHandle: NSFileHandle
+        let _fileHandle: NSFileHandle?
         let _totalFileLength: CUnsignedLongLong
         var _currentOffset: CUnsignedLongLong = 0
         
@@ -32,12 +32,13 @@ extension DebugLog
         {
             self.filePath = filePath
             self._fileHandle = NSFileHandle(forReadingAtPath: filePath)
-            self._totalFileLength = self._fileHandle.seekToEndOfFile()
+            println(self._fileHandle)
+            self._totalFileLength = self._fileHandle!.seekToEndOfFile()
         }
         
         deinit
         {
-            self._fileHandle.closeFile()
+            self._fileHandle!.closeFile()
         }
         
         func readLine() -> NSString!
@@ -46,7 +47,7 @@ extension DebugLog
                 return nil
             }
             
-            self._fileHandle.seekToFileOffset(self._currentOffset)
+            self._fileHandle!.seekToFileOffset(self._currentOffset)
             let newLineData = self.lineDelimiter.dataUsingEncoding(NSUTF8StringEncoding)
             let currentData = NSMutableData()
             var shouldReadMore = true
@@ -59,7 +60,7 @@ extension DebugLog
                         break
                     }
                     
-                    var chunk = self._fileHandle.readDataOfLength(self.chunkSize)
+                    var chunk = self._fileHandle!.readDataOfLength(self.chunkSize)
                     
                     let newLineRange = self._rangeOfData(chunk, dataToFind: newLineData!)
                     
@@ -91,7 +92,7 @@ extension DebugLog
             var stop = false
             while stop == false {
                 line = self.readLine()
-                if !line { break }
+                if !(line != nil) { break }
                 
                 closure(line, &stop)
             }
@@ -109,8 +110,8 @@ extension DebugLog
             
             for index in 0 ..< data.length {
                 
-                let bytes_ = UnsafeBufferPointer(start: UnsafePointer<CUnsignedChar>(data.bytes), length: data.length)
-                let searchBytes_ = UnsafeBufferPointer(start: UnsafePointer<CUnsignedChar>(dataToFind.bytes), length: data.length)
+                let bytes_ = UnsafeBufferPointer(start: UnsafePointer<CUnsignedChar>(data.bytes), count: data.length)
+                let searchBytes_ = UnsafeBufferPointer(start: UnsafePointer<CUnsignedChar>(dataToFind.bytes), count: data.length)
                 
                 if bytes_[index] == searchBytes_[searchIndex] {
                     if foundRange.location == NSNotFound {

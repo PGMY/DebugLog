@@ -12,15 +12,15 @@ import QuartzCore
 
 extension Range : Printable, DebugPrintable
 {
-    public var description: String
-    {
-        return "\(startIndex)..<\(endIndex)"
-    }
-    
-    public var debugDescription: String
-    {
-        return self.description
-    }
+//    public var description: String
+//    {
+//        return "\(startIndex)..<\(endIndex)"
+//    }
+//    
+//    public var debugDescription: String
+//    {
+//        return self.description
+//    }
 }
 
 //

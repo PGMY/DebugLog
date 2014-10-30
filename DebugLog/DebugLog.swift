@@ -14,7 +14,7 @@ struct DebugLog
     
     static var printHandler: (Any!, String!, String!, Int) -> Void = { body, filename, functionName, line in
         
-        if !body {
+        if !(body != nil) {
             println("[\(filename).\(functionName):\(line)]")    // print functionName
             return
         }
@@ -60,6 +60,10 @@ func LOG_OBJECT(body: Any!, filename: String = __FILE__, var functionName: Strin
 {
 #if DEBUG
     
+    
+    println(filename)
+    println(functionName)
+    println(line)
     let reader = DebugLog.FileReader(filePath: filename)
     
     let logBody = "\(reader.readLogLine(line)) = \(body)"
